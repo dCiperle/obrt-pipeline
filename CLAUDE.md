@@ -2,44 +2,49 @@
 
 ## Project
 
-obrt-pipeline is an AI-driven invoicing automation system for Slovenian
-sole proprietors and small businesses (obrtniki). The goal is to remove
-the manual overhead of monthly invoice preparation, validation, and
-submission by orchestrating an agent over the user's existing
-accounting tools.
+obrt-pipeline is an internal tooling repository. It stores reusable
+skills, agent patterns, and documentation that double as a proof of
+competence and a test ground for new agent designs.
 
-The system integrates with Minimax (accounting platform) and FURS DPR
-(the Slovenian tax authority's davčno potrjevanje računov endpoint),
-and is driven by a Claude-based agent that interprets free-form input
-(notes, voice transcripts, delivery slips) into structured invoice
-records.
+Client code for paid pilots lives in a separate repository, not here.
+
+## Business context
+
+Maintained by David Ciperle. The surrounding business is AI automation
+for Slovenian manufacturing and technical service companies with 5 to
+50 employees, primarily in Gorenjska and central Slovenia.
+
+Pricing model: pilot 500 to 1,500 EUR plus retainer 150 to 300 EUR per
+month. 90-day target (through 2026-08-09): 3 paying clients.
 
 ## Tech stack
 
-Python 3.12, FastAPI, and the Claude Agent SDK. None of this is
-wired up yet — the stack will be introduced in Teden 1. Treat the
-repository as a documentation-only scaffold at this point.
+Python 3.12, planned from Week 5 onward. Current state: empty scaffold
+with markdown skill files and documentation. Planned stack: Claude
+Agent SDK, FastAPI, FastMCP for client-facing MCP servers.
 
-## Target user
+## First user (dogfood)
 
-Slovenian obrtniki operating as s.p. or small d.o.o., issuing roughly
-8–30 invoices per month. They typically work alone or with one or two
-employees, keep books in Minimax, and have limited tolerance for
-technical setup.
-
-## Pilot customer
-
-A small Slovenian s.p. in the mechanical and plumbing installation
-trade serves as design partner and first pilot customer. All early
-design decisions should be validated against the pilot's real workflow
-before generalizing.
+Jože Ciperle s.p., mechanical and plumbing installations, the author's
+father. The `racuni-ciperle` skill (currently lives in the Cowork
+project; integration into this repo is planned after Week 5) issues 10
+to 20 production invoices per month.
 
 ## Code style
 
-Documentation (README, CONTRIBUTING, CLAUDE.md) and code comments are
-written in English. User-facing surface — UI strings, error messages
-shown to obrtniki, generated invoice text, sales emails — is written
-in Slovenian.
+Documentation (README, CONTRIBUTING, CLAUDE.md, code comments) is
+written in English. User-facing strings (invoices, quotes for the
+father's customers) are written in Slovenian. Use the Slovenian
+decimal comma in Slovenian text.
+
+## Critical rules
+
+- On invoices for the father's business, always use only
+  "JOŽE CIPERLE s.p." as the legal name. Never use "ZAKLJUČNA
+  GRADBENA DELA" or "J&D CIPERLE".
+- This is an internal tooling repo. Client code for future pilots
+  (after the first signed pilot) goes into a separate repo, not this
+  one.
 
 ## Where to find things
 
