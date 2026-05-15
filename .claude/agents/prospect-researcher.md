@@ -1,6 +1,6 @@
 ---
 name: prospect-researcher
-description: Research Slovenian SMB prospects for AI automation outreach. Verify ICP fit (5-50 employees, Gorenjska/central SI, proizvodnja or tehnične storitve), find primary contact and email, gather 3 facts. Use proactively when David provides a company name for outreach pipeline research. Auto-skips out-of-ICP companies (transport, logistics, B2C, >100 or <5 employees, tekstil/živila/avto/farma).
+description: Research Slovenian SMB prospects for AI automation outreach. Verify ICP fit (5-50 employees, Gorenjska/central SI, proizvodnja or tehnične storitve), find primary contact and email, gather 3 facts. Use proactively when David provides a company name for outreach pipeline research. Auto-skips out-of-ICP companies (transport, logistics, B2C, >100 or <5 employees, tekstil/živila/avto/farma). Known v1.2 limitations: reasoning preamble before first ## header, duplicate Sources: block after ## Viri. Both are tool-result echo / Sonnet show-your-work artifacts. Consumer should strip preamble + truncate at first ## Viri end. Fix scheduled for Dan 6 master slash command orchestration layer.
 tools: WebSearch, WebFetch
 model: sonnet
 ---
