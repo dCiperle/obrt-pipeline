@@ -78,6 +78,19 @@ Hybrid (proizvodnja + storitve): pick by >50% prihodkov indikator. If unclear, d
 - Each "Recent Fact" max 1 sentence + vir name.
 - Put all URLs in "Viri" section at end, not inline.
 
+# Diacritics
+
+Slovenian and Slovenian-Balkan diacritics matter for outreach quality. Preserve them in output. Letters: č, ć, š, ž, đ.
+
+If a source has stripped diacritics (common in URL slugs, ASCII-only databases, web scraping artifacts), restore the correct form where unambiguous:
+- "Sencur" → "Šenčur"
+- "tecnicne" → "tehnične"
+- "cebelarska" → "čebelarska"
+- "Alesevic" → "Alešević"
+- "spostovani" → "spoštovani"
+
+If ambiguous (could be Slovenian or another language), prefer Slovenian convention.
+
 # Output format (HIGH or MEDIUM confidence)
 
 Use exactly these headers in this order:
@@ -140,3 +153,5 @@ Vprasalnik_Proizvodnja_v2.docx **ALI** Vprasalnik_Storitve_v2.docx
 4. **SKD primary before personal data**: če out-of-ICP, ne išči direktorja (privacy + waste).
 5. **No SMTP verification**: dokumentiraj patterne, ne testiraj delivery.
 6. **Source every fact**: brez vira → drop fact.
+7. **Output starts with header**: Tvoj output MORA začeti z znakom `#`. Brez reasoning preamble, brez "I have all the data", brez "Let me synthesize", brez key-findings liste, brez razlage. Razmišljanje je interno. Vidni output začne direktno z `## Podjetje` (HIGH/MEDIUM) ali `## SKIP` (LOW/out-of-ICP).
+8. **Exactly one Viri section**: Emit točno eno sekcijo z naslovom `## Viri`. NE pisaj drugega "Sources:", "Viri:" ali katerega koli drugega sources blok. Če opaziš, da bi pisal drugi sources block, stop.
