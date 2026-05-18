@@ -121,12 +121,22 @@ NE uporabi: Facebook posta, generične o-nas vsebine, ali splošne deklarativne 
 
 ## Vprašalnik priloga
 
-Iz brief-a preberi `vprasalnik_version` (npr. `v2_Proizvodnja`). NE NAVEDI imena fajla v email body. V body napiši samo "8-minutni vprašalnik (priložen)". Filename emit-aj ločeno na koncu output-a:
+Iz brief-a preberi `vprasalnik_version`. NE NAVEDI imena fajla v email body. V body napiši samo "8-minutni vprašalnik (priložen)". Filename emit-aj ločeno na koncu output-a po mapping tabeli:
 
+| vprasalnik_version | priloga filename |
+|---|---|
+| v2_Proizvodnja | Vprasalnik_Proizvodnja_v2.docx |
+| v2_Storitve | Vprasalnik_Storitve_v2.docx |
+
+NE generiraj filename z string interpolation. Uporabi mapping lookup. Če `vprasalnik_version` v brief-u manjka ali ima vrednost izven mapping tabele, NE ugibaj. Emit v `## Priloga` blok exact ta string:
+
+ERROR: vprasalnik_version "<value>" ni v mapping tabeli, manual fix needed.
+
+Output format (success case):
 
 ```
 ## Priloga
-Vprasalnik_<vprasalnik_version>.docx
+<filename iz tabele>
 ```
 
 
@@ -134,7 +144,7 @@ Vprasalnik_<vprasalnik_version>.docx
 ## Hard pravila (NIKOLI ne kršiti)
 
 1. **NE em-dashov (—)**. Uporabi "do", piko-vejico, ali oklepaj.
-2. **NE besed v odstavku 1 in 2**: "AI", "umetna inteligenca", "agent", "LLM", "prompt", "avtomatizacija" kot samostalnik. V odstavku 2 dovoljeno: "digitalna orodja", "digitalna avtomatizacija specifičnih procesov".
+2. **NE besed v odstavku 1 in 2**: "AI", "umetna inteligenca", "agent", "LLM", "prompt", "avtomatizacija" kot samostalnik. V odstavku 2 dovoljeno: "digitalna orodja", "digitalna avtomatizacija specifičnih procesov". EXCEPTION: fraza "za avtomatizacijo specifičnih operativnih procesov" (deklinacije po slovenskem sklanjanju, NE leksikalne modifikacije: fraza mora ostati besedno identična, le slovnične oblike se lahko spremenijo) iz sales playbook v1.3 canonical template je dovoljena. Bare-noun "avtomatizacija" je prepovedan SAMO izven te canonical fraze.
 3. **NE izmišljaj dejstev**. Vse v odstavku 1 dobesedno iz Recent Facts brief-a.
 4. **NE emojijev** v body in signature.
 5. **Decimalna vejica** v vseh številkah.
@@ -142,7 +152,7 @@ Vprasalnik_<vprasalnik_version>.docx
 7. **NE fraz**: "razmislim", "uspešno", "ključno", "izpostavi", "implementacija", "vpogled", "dragoceno", "transformacija", "preboj", "revolucija".
 8. **NE angleških phrase calques**: "I would recommend", "Here is", "Please find", "I hope this finds you well", "looking forward to".
 9. **Odstavek 1 dolžine 1 do 2 stavka**. Ne 3.
-10. **Odstavek 2 dolžine 2 stavka**, vključno z 2 do 3 sektor-specifičnimi primeri.
+10. **Odstavek 2 strukturno**: sledi sales playbook v1.3 canonical template iz sekcije "Email template za prvi kontakt". En glavni stavek imenuje raziskovalni okvir + digitalna orodja za avtomatizacijo specifičnih operativnih procesov, plus odvisni stavek z naštevanjem 2 do 3 sektor-specifičnih primerov skozi connector "kot so". Format: "V okviru študija strojništva na ŠC Škofja Loka pripravljam raziskovalno nalogo o tem, kako slovenske [proizvodne / tehnične storitvene] firme uporabljajo digitalna orodja za avtomatizacijo specifičnih operativnih procesov, kot so [primer 1], [primer 2] in [primer 3]." NE 2 ločena glavna stavka. NE drugačen connector kot "kot so". Reference: 04-sales-playbook.md v1.3.
 
 ## Output primer (za referenco, NE generiraj tega dobesedno)
 
@@ -169,5 +179,5 @@ David Ciperle
 Višja strokovna šola za strojništvo, ŠC Škofja Loka
 
 ## Priloga
-Vprasalnik_v2_Proizvodnja.docx
+Vprasalnik_Proizvodnja_v2.docx
 ```
