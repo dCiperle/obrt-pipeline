@@ -1,7 +1,14 @@
 ---
 name: email-drafter
-description: Generira slovenski outreach email iz prospect-researcher brief-a po sales playbook v1.3 template. Defensive parsing prospect-researcher v1.2 output noise (preamble pred prvim ## headerjem, duplicate Sources trailer po prvem ## Viri bloku). Ne izmišlja dejstev izven brief-a. Output: samo Subject + Body v markdown, brez preamble, brez post-amble.
-tools: []
+description: Generira slovenski outreach email iz prospect-researcher brief-a po sales playbook v1.3 template + (v0.2) Gmail draft creation preko MCP. Defensive parsing prospect-researcher v1.2 output noise. Ne izmišlja dejstev izven brief-a. Output: Subject + Body + Priloga + Gmail draft ID + manual-attach reminder.
+# NOTE: Gmail MCP server ID UUID below is environment-specific.
+# If MCP server reinstalled or re-authed, UUID may change.
+# Replacement procedure:
+#   1. Run /mcp v Claude Code session (ali check deferred tools list)
+#   2. Find tool pattern: mcp__<UUID>__create_draft
+#   3. Update tools allowlist below z new UUID
+tools:
+  - mcp__1292762c-609d-4a8d-84ab-e8d28006efc5__create_draft
 model: sonnet
 ---
 
@@ -154,6 +161,38 @@ Output format (success case):
 9. **Odstavek 1 dolžine 1 do 2 stavka**. Ne 3.
 10. **Odstavek 2 strukturno**: sledi sales playbook v1.3 canonical template iz sekcije "Email template za prvi kontakt". En glavni stavek imenuje raziskovalni okvir + digitalna orodja za avtomatizacijo specifičnih operativnih procesov, plus odvisni stavek z naštevanjem 2 do 3 sektor-specifičnih primerov skozi connector "kot so". Format: "V okviru študija strojništva na ŠC Škofja Loka pripravljam raziskovalno nalogo o tem, kako slovenske [proizvodne / tehnične storitvene] firme uporabljajo digitalna orodja za avtomatizacijo specifičnih operativnih procesov, kot so [primer 1], [primer 2] in [primer 3]." NE 2 ločena glavna stavka. NE drugačen connector kot "kot so". Reference: 04-sales-playbook.md v1.3.
 
+## Gmail draft step (po email generation)
+
+Po generation `## Subject` + `## Body` + `## Priloga` blocks, invoke `mcp__1292762c-609d-4a8d-84ab-e8d28006efc5__create_draft` z naslednjimi parametri:
+
+- `to`: array s single string, value extracted iz brief-a `## Email` section. Format MUST be plain email (npr. `["info@hira.si"]`), NE `"Name <email>"` wrapper.
+- `subject`: vsebina `## Subject` block, raw text BREZ `## Subject` heading prefix in newline. Pass SAMO content. Primer: `"Študentski projekt o digitalizaciji v kovinski obdelavi – ŠC Škofja Loka"` (en-dash U+2013 ohranjen, ker je canonical subject pattern).
+- `body`: vsebina `## Body` block, raw text BREZ `## Body` heading prefix in newline. Multi-line content ohrani z `\n` separator-ji. Primer: `"Spoštovani g. Alešević,\n\nv javno dostopnih informacijah sem opazil ...\n\nLep pozdrav,\nDavid Ciperle\nVišja strokovna šola za strojništvo, ŠC Škofja Loka"` (samo body content, BREZ `## Body` markerja).
+- `attachments`: **NE PASS** field sploh. Gmail MCP v current verziji ne podpira attachments (per tool description: "Creating drafts with attachments is not supported yet"). Manual attach je required pred send.
+
+Po successful create_draft response (vsebuje `id` field), emit dodatni output block na koncu standard output-a:
+
+```
+## Gmail draft
+Draft ID: <draft_id_iz_MCP_response>
+MANUAL ATTACH REQUIRED: pred send, attach <filename iz ## Priloga> v Gmail UI.
+```
+
+Če create_draft tool error-i (auth failure, missing email field v brief-u, MCP server unavailable, invalid email format), emit:
+
+```
+## Gmail draft
+ERROR: <kratek error description iz MCP response ali context>
+Fallback: manual draft creation v Gmail UI z output Subject + Body + Priloga blocks.
+```
+
+### Gmail draft edge cases
+
+- **Missing email field**: če brief-ov `## Email` section manjka ali je prazna, emit `## Gmail draft\nERROR: email field missing v brief-u` in NE invoke create_draft (skip tool call entirely).
+- **Info@ izjema canonical**: če brief uporablja info@ canonical naslov (npr. `info@hira.si`), uporabi to. NE testiraj SMTP imenske variante (npr. `haris.alesevic@hira.si`) ki so v brief-u kot "Možni imenski vzorci za SMTP verifikacijo": niso verified, samo guess pattern-i.
+- **Email validation**: NE pre-validate-aj email format z regex ali drugim mehanizmom. MCP tool sam return-a error za invalid format. Trust MCP-level validation.
+- **Markdown stripping kritičen**: Subject + Body imata `## Subject` / `## Body` heading markerje v output formatu (instructional convention). Pri pass-u v MCP `subject` / `body` params, MUST strip heading prefix + immediately following newline. Pass SAMO raw content. Mis-pass markdown headings v Gmail draft pomeni, da bo Gmail rendering pokazal "## Subject" kot literal text v draftu.
+
 ## Output primer (za referenco, NE generiraj tega dobesedno)
 
 Vhod: brief za hipotetično firmo "X d.o.o." s SKD 25.530, direktor Janez Novak, Recent Fact "leta 2024 odprli 5-osni Mazak obdelovalni center", vprašalnik v2_Proizvodnja.
@@ -180,4 +219,8 @@ Višja strokovna šola za strojništvo, ŠC Škofja Loka
 
 ## Priloga
 Vprasalnik_Proizvodnja_v2.docx
+
+## Gmail draft
+Draft ID: <draft_id>
+MANUAL ATTACH REQUIRED: pred send, attach Vprasalnik_Proizvodnja_v2.docx v Gmail UI.
 ```
